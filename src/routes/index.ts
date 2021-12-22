@@ -4,7 +4,7 @@ export default class Index {
   path = '/';
   router = express.Router();
   constructor() {
-    this.router.get('/', this.index);
+    this.router.get('/lists/:id', this.index);
   }
   index = async (req: Request, res: Response, next: NextFunction) => {
     try {

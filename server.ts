@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import Index from './src/routes/index';
 
 import App from './src/app';
-
+import connect from './schemas/index';
 dotenv.config();
 
 /**
@@ -32,7 +32,7 @@ const model = new modelIndex(models);
         console.error(err);
  });
  */
-
+connect();
 /**
  * DEFINE ROUTES
  * @OBJECT

@@ -1,6 +1,5 @@
 import express, { Router, Request, Response, NextFunction } from 'express';
 import nunjucks from 'nunjucks';
-import path from 'path';
 
 interface Setting {
   key: string;
