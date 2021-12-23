@@ -2,10 +2,10 @@ import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
 
-import Index from './src/routes/index';
+import Notes from './src/routes/notes';
 
 import App from './src/app';
-import connect from './schemas/index';
+import connect from './src/schemas/index';
 dotenv.config();
 
 /**
@@ -37,7 +37,7 @@ connect();
  * DEFINE ROUTES
  * @OBJECT
  */
-const routes = [new Index()];
+const routes = [new Notes()];
 
 /**
  * DEFINE MIDDLEWARES
