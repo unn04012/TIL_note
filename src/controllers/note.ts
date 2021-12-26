@@ -1,13 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import Note from '../schemas/note';
+const makeResult = (message: string | Array<typeof Note>, status: number) => {
+  return { message, status };
+};
 const noteList = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const notes = await Note.find();
-    if (notes) {
-      res.json({ status: 200, message: notes });
-    } else {
-      res.json({ status: 404, message: 'no note list' });
-    }
+    notes ? res.json(makeResult(notes, 200)) : res.json(makeResult('no note list', 404));
   } catch (err) {
     console.error(err);
     next(err);

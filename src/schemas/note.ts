@@ -2,9 +2,12 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 const noteSchema = new Schema({
-  content: {
+  title: {
     type: String,
     required: true,
+  },
+  content: {
+    type: String,
   },
   createdAt: {
     type: Date,
