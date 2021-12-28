@@ -1,9 +1,11 @@
 import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
-const Markdown = React.lazy(() => import('./views/markdown/markdown'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
+
+const Note = React.lazy(() => import('./views/note/notelist/notelist'))
+const Markdown = React.lazy(() => import('./views/note/markdown/markdown'))
 
 // Base
 const Accordion = React.lazy(() => import('./views/base/accordion/Accordion'))
@@ -54,7 +56,9 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
-  { path: '/markdown', name: 'Markdown', component: Markdown },
+  { path: '/note', name: 'Note', component: Note, exact: true },
+  { path: '/note/list', name: 'Note', component: Note },
+  { path: '/note/markdown', name: 'Markdown', component: Markdown },
   { path: '/theme', name: 'Theme', component: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', component: Colors },
   { path: '/theme/typography', name: 'Typography', component: Typography },
