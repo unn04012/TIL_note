@@ -6,6 +6,7 @@ import Notes from './src/routes/notes';
 
 import App from './src/app';
 import connect from './src/schemas/index';
+import cors from 'cors';
 dotenv.config();
 
 /**
@@ -44,10 +45,20 @@ const routes = [new Notes()];
  */
 const __dirname = path.resolve();
 
+const allowedOrigins = ['http://localhost:3000', '*'];
+
+const options = {
+  origin: allowedOrigins,
+};
+
 const middlewares = [
   express.static(path.join(__dirname, 'public')),
   express.json(),
   express.urlencoded({ extended: false }),
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  }),
 ];
 
 /**
@@ -60,7 +71,7 @@ const appConfig = {
   routes,
   middlewares,
   settings,
-  port: process.env.PORT || 3000,
+  port: process.env.PORT || 8000,
 };
 
 // CREATE SERVER
