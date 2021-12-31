@@ -6,7 +6,18 @@ const makeResult = (message: string | Array<typeof Note>, status: number) => {
 const noteList = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const notes = await Note.find();
+    console.log(notes);
     notes ? res.json(makeResult(notes, 200)) : res.json(makeResult('no note list', 404));
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
+const noteByTitle = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { title } = req.params;
+    const lists = await Note.find({ title });
+    res.json(makeResult(lists, 200));
   } catch (err) {
     console.error(err);
     next(err);
@@ -25,8 +36,9 @@ const noteListByDate = async (req: Request, res: Response, next: NextFunction) =
 };
 const createNote = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { content } = req.body;
-    await Note.create({ content });
+    const { title, content } = req.body;
+    console.log(title, content);
+    await Note.create({ title, content });
     res.json({ message: 'success', stateCode: 200 });
   } catch (err) {
     console.error(err);
@@ -58,4 +70,4 @@ const deleteNote = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { noteList, createNote, updateNote, deleteNote, noteListByDate };
+export { noteList, createNote, updateNote, deleteNote, noteListByDate, noteByTitle };
