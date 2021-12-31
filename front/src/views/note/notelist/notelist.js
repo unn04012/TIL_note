@@ -1,34 +1,41 @@
 import React, { useEffect, useState } from 'react'
-import { CButton, CLink } from '@coreui/react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import MarkdownComponent from 'src/components/Markdown'
 axios.defaults.withCredentials = true
-const fetchData = async () => {
-  try {
-    const result = await axios.get('http://localhost:8000/notes', {})
-    console.log(result)
-  } catch (err) {
-    console.log(err)
-  }
-}
-// import Editor from './editor'
-const Note = () => {
-  const [data, setData] = useState('')
 
-  //fetchData()
+// import Editor from './editor'
+const NoteList = () => {
+  const [notes, setNotes] = useState([]) // 초기값이 중요
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const fetchNotes = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/notes')
+      // console.log(response.data)
+      setNotes(response.data.message)
+    } catch (err) {
+      setError(err)
+    }
+    setLoading(false)
+  }
+  useEffect(() => {
+    fetchNotes()
+  }, [])
   return (
     <>
       <div className="container">
         <MarkdownComponent name="unn04012" />
-        <button onClick={fetchData}>alert</button>
-        <Link to="/note/markdown">글쓰기</Link>
-        <CButton component="a" color="primary" href="/note/markdown" role="button">
-          글쓰기
-        </CButton>
+        <Link to="/notes/markdown">글쓰기</Link>
+
+        {notes.map((note) => (
+          <li key={note._id}>
+            <Link to={`/notes/${note.title}`}>{note.title}</Link>
+          </li>
+        ))}
       </div>
     </>
   )
 }
 
-export default Note
+export default NoteList

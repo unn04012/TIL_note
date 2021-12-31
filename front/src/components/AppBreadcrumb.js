@@ -4,12 +4,21 @@ import { useLocation } from 'react-router-dom'
 import routes from '../routes'
 
 import { CBreadcrumb, CBreadcrumbItem } from '@coreui/react'
+import { matchPath } from 'react-router'
 
 const AppBreadcrumb = () => {
   const currentLocation = useLocation().pathname
 
   const getRouteName = (pathname, routes) => {
-    const currentRoute = routes.find((route) => route.path === pathname)
+    // const currentRoute = routes.find((route) => route.path === pathname)
+    const currentRoute = routes.find(
+      (route) =>
+        matchPath(pathname, {
+          path: route.path,
+          exact: route.exact,
+          strict: route.strict,
+        }) != null,
+    )
     return currentRoute.name
   }
 
