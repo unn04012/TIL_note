@@ -48,8 +48,9 @@ const createNote = async (req: Request, res: Response, next: NextFunction) => {
 };
 const updateNote = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id, content } = req.body;
-    const result = await Note.updateOne({ _id: id }, { content });
+    const { id } = req.params;
+    const { title, content } = req.body;
+    const result = await Note.updateOne({ _id: id }, { title, content });
     if (result) res.json({ message: 'update success', stateCode: 200 });
     else {
       res.json({ message: 'update fail', stateCode: 404 });
@@ -61,7 +62,7 @@ const updateNote = async (req: Request, res: Response, next: NextFunction) => {
 };
 const deleteNote = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     await Note.deleteOne({ _id: id });
     res.json({ message: 'delete success', stateCode: 200 });
   } catch (err) {

@@ -9,7 +9,7 @@ export default class Notes {
     this.router.get('/date/:date', noteListByDate);
     this.router.get('/title/:title', noteByTitle);
     this.router.post('/', createNote);
-    this.router.patch('/', updateNote);
-    this.router.delete('/', deleteNote);
+    this.router.patch('/:id', updateNote);
+    this.router.delete('/:id', deleteNote);
   }
 }
