@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import axios from 'axios'
 import MDEditor from '@uiw/react-md-editor'
 import { Link } from 'react-router-dom'
+import { CButton } from '@coreui/react'
 const Note = ({ match }) => {
   const { title } = match.params
   const [note, setNote] = useState([])
@@ -18,15 +19,17 @@ const Note = ({ match }) => {
   useEffect(() => {
     fetchNotes()
   }, [])
+
   return (
     <>
       <div className="container">
         <h1 style={{ fontSize: '40px' }}>{title}</h1>
         <br />
         <MDEditor.Markdown source={note.content} />
-        <Link className="btn btn-primary" to={`/notes/markdown/${title}`} role="button">
+        <br />
+        <CButton href={`/notes/markdown/${title}`} role="button" variant="outline" size="sm">
           수정하기
-        </Link>
+        </CButton>
       </div>
     </>
   )

@@ -11,6 +11,7 @@ import { sygnet } from 'src/assets/brand/sygnet'
 
 import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
+import { Link } from 'react-router-dom'
 
 // sidebar nav config
 import navigation from '../_nav'
@@ -30,7 +31,12 @@ const AppSidebar = () => {
       }}
     >
       <CSidebarBrand className="d-none d-md-flex" to="/">
-        <CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
+        <h3 className="sidebar-brand-full">
+          <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
+            TIL Note
+          </Link>
+        </h3>
+        {/* <CIcon className="sidebar-brand-full" icon={logoNegative} height={35} /> */}
         <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
       </CSidebarBrand>
       <CSidebarNav>

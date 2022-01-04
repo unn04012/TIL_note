@@ -3,6 +3,7 @@ import MDEditor from '@uiw/react-md-editor'
 import { CForm, CButton, CFormInput } from '@coreui/react'
 import axios from 'axios'
 import PropTypes from 'prop-types'
+import { useHistory } from 'react-router'
 
 // import Editor from './editor'
 const Markdown = ({ match }) => {
@@ -11,9 +12,11 @@ const Markdown = ({ match }) => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [error, setError] = useState('')
+  let history = useHistory()
   const handleSubmit = async (e) => {
     // 제출 및 수정용
     e.preventDefault()
+
     try {
       const note = { title, content }
       let response = ''
@@ -23,7 +26,7 @@ const Markdown = ({ match }) => {
         response = await axios.post('http://localhost:8000/notes', note)
       }
 
-      return response.data
+      history.push('/notes')
     } catch (err) {
       setError(err)
     }
