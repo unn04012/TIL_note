@@ -8,9 +8,11 @@ import { useHistory } from 'react-router'
 // import Editor from './editor'
 const Markdown = ({ match }) => {
   const presentTitle = match.params.title
+  const pageId = match.params.id
   const [id, setId] = useState('')
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
+  const [subPages, setSubPages] = useState('')
   const [error, setError] = useState('')
   let history = useHistory()
   const handleSubmit = async (e) => {
@@ -20,12 +22,13 @@ const Markdown = ({ match }) => {
     try {
       const note = { title, content }
       let response = ''
-      if (id) {
+      if (pageId) {
+        response = await axios.post(`http://localhost:8000/notes/title/${pageId}`, note)
+      } else if (id) {
         response = await axios.patch(`http://localhost:8000/notes/${id}`, note)
       } else {
         response = await axios.post('http://localhost:8000/notes', note)
       }
-
       history.push('/notes')
     } catch (err) {
       setError(err)
@@ -34,9 +37,19 @@ const Markdown = ({ match }) => {
   const fetchNoteByTitle = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/notes/title/${presentTitle}`)
+
       setId(response.data.message[0]._id)
       setTitle(response.data.message[0].title)
       setContent(response.data.message[0].content)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  const fetchNoteById = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/notes/title/${pageId}`)
+      console.log(response)
+      setSubPages(response.data.message)
     } catch (err) {
       console.error(err)
     }
@@ -45,6 +58,9 @@ const Markdown = ({ match }) => {
     if (presentTitle) {
       fetchNoteByTitle()
     }
+    // if (pageId) {
+    //   fetchNoteById()
+    // }
   }, [])
   return (
     <>

@@ -100,7 +100,7 @@ const routes = [
   { path: '/notifications/toasts', name: 'Toasts', component: Toasts },
   { path: '/widgets', name: 'Widgets', component: Widgets },
   { path: '/notes', name: 'NoteList', component: NoteList, exact: true },
-  { path: '/notes/markdown/:title?', name: 'Markdown', component: Markdown },
+  { path: '/notes/:id?/markdown/:title?', name: 'Markdown', component: Markdown },
   { path: '/notes/:title', name: 'Note', component: Note },
 ]
 
