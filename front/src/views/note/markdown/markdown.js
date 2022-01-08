@@ -72,6 +72,7 @@ const Markdown = ({ match }) => {
           aria-label="lg input example"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          style={{ border: 'none' }}
         />
         <br />
         <MDEditor.Markdown source={content} /> <br />

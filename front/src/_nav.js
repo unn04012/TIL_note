@@ -276,6 +276,15 @@ const _nav = [
     name: 'Extras',
   },
   {
+    component: CNavItem,
+    name: '휴지통',
+    to: '/trash',
+    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+    badge: {
+      color: 'info',
+    },
+  },
+  {
     component: CNavGroup,
     name: 'Pages',
     icon: <CIcon icon={cilStar} customClassName="nav-icon" />,

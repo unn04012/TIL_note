@@ -1090,10 +1090,10 @@
   "resolved" "https://registry.npmjs.org/@coreui/coreui/-/coreui-4.0.0.tgz"
   "version" "4.0.0"
 
-"@coreui/icons-react@^2.0.0":
-  "integrity" "sha512-WelvsvDehCryH+tcUMui3r6oPmmb0gMiV9OvghytWTgm5bc0wn/VnL4fxn1PAwBEiMyL/maINLWp6zG0vv/8Wg=="
-  "resolved" "https://registry.npmjs.org/@coreui/icons-react/-/icons-react-2.0.0.tgz"
-  "version" "2.0.0"
+"@coreui/icons-react@^2.0.1":
+  "integrity" "sha512-532DYj/b+YeSXfvLLK1FoH6uBMCWdNuxzQe+zQF8NQRFT869Zt6VnbLKNwObxZLUMXwwyATbku8Dw4Cdm0eqiQ=="
+  "resolved" "https://registry.npmjs.org/@coreui/icons-react/-/icons-react-2.0.1.tgz"
+  "version" "2.0.1"
 
 "@coreui/icons@^2.1.0":
   "integrity" "sha512-3yY9J0088TSY403jwJeP5YERH3RLOvxdhOa4VIQsGOX4fuQZiyVUM+vwlzyCSpgAv9NwKPkCor+gc+JJaYf0TA=="

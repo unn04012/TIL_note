@@ -64,6 +64,7 @@ const Note = ({ match }) => {
           새 페이지 생성
         </CButton>
         <br />
+        <br />
         <CRow>
           {subPages &&
             subPages.map((note) => (
