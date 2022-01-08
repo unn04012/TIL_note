@@ -7,6 +7,7 @@ import {
   createNote,
   updateNote,
   deleteNote,
+  searchNote,
 } from '../controllers/note';
 
 export default class Notes {
@@ -16,6 +17,7 @@ export default class Notes {
     this.router.get('/', noteList);
     this.router.get('/date/:date', noteListByDate);
     this.router.get('/title/:title', noteByTitle);
+    this.router.get('/search', searchNote);
     this.router.post('/title/:id', createSubNote);
     this.router.post('/', createNote);
     this.router.patch('/:id', updateNote);

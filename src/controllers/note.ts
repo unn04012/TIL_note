@@ -13,7 +13,7 @@ const makeResult = (message: string | Array<typeof Note>, status: number) => {
 };
 const noteList = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const notes = await Note.find({ parent: null });
+    const notes = await Note.find({ parentId: null });
     notes ? res.json({ message: notes, status: 200 }) : res.json(makeResult('no note list', 404));
   } catch (err) {
     console.error(err);
@@ -24,10 +24,8 @@ const noteByTitle = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title } = req.params;
     const lists = await Note.find({ title });
-    let subPages;
-    if (lists[0].pages) {
-      subPages = await Note.find({ _id: { $in: lists[0].pages } });
-    }
+    const subPages = await Note.find({ parentId: lists[0]._id });
+
     res.json({ message: lists, status: 200, subPages: subPages ? subPages : null });
   } catch (err) {
     console.error(err);
@@ -61,12 +59,12 @@ const createSubNote = async (req: Request, res: Response, next: NextFunction) =>
   try {
     const { id } = req.params;
     const { title, content } = req.body;
-    const result = await Note.create({ title, content, parent: id });
+    const result = await Note.create({ title, content, parentId: id });
     if (result) {
-      await Note.updateOne({ _id: id }, { $push: { pages: result._id } });
+      res.json(makeResult('create subNote success', 200));
+    } else {
+      res.json(makeResult('create fail', 400));
     }
-
-    res.json(makeResult('create subNote success', 200));
   } catch (err) {
     console.error(err);
     next(err);
@@ -97,4 +95,17 @@ const deleteNote = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { noteList, createNote, updateNote, deleteNote, noteListByDate, noteByTitle, createSubNote };
+const searchNote = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { search } = req.query;
+    const result = await Note.find({
+      $or: [{ title: { $regex: '.*' + search + '.*' } }, { content: { $regex: '.*' + search + '.*' } }],
+    });
+    res.json({ message: result, stateCode: 200 });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
+
+export { noteList, createNote, updateNote, deleteNote, noteListByDate, noteByTitle, createSubNote, searchNote };
