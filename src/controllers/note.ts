@@ -1,6 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
 import Note from '../schemas/note';
 
+const searchIndex = (content: string) => {
+  console.log(content.length);
+  let index = -1;
+  const quotes = [];
+  do {
+    index = content.indexOf('```', index + 1);
+    if (index !== -1) quotes.push(index);
+  } while (index !== -1);
+  let searchContent = content.slice(0, quotes[0]);
+  for (let i = 1; i < quotes.length; i += 2) {
+    if (quotes[i + 1]) searchContent += content.slice(quotes[i] + 3, quotes[i + 1]);
+  }
+
+  if (quotes[quotes.length - 1] !== content.length - 1)
+    searchContent += content.slice(quotes[quotes.length - 1] + 3, content.length);
+
+  return searchContent.replace(/[^a-zA-Z0-9():ㄱ-ㅎ|ㅏ-ㅣ|가-힣._\s'"]/g, '').trim();
+};
+
 interface List {
   _id: string;
   title: string;
@@ -46,7 +65,9 @@ const noteListByDate = async (req: Request, res: Response, next: NextFunction) =
 const createNote = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title, content } = req.body;
-    await Note.create({ title, content });
+    const searchContent = searchIndex(content);
+    console.log(searchContent);
+    await Note.create({ title, content, search: searchContent });
     res.json({ message: 'success', stateCode: 200 });
   } catch (err) {
     console.error(err);
@@ -98,8 +119,9 @@ const deleteNote = async (req: Request, res: Response, next: NextFunction) => {
 const searchNote = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { search } = req.query;
+    const regex = new RegExp(`.*${search}.*`, 'i');
     const result = await Note.find({
-      $or: [{ title: { $regex: '.*' + search + '.*' } }, { content: { $regex: '.*' + search + '.*' } }],
+      $or: [{ title: { $regex: regex } }, { search: { $regex: regex } }],
     });
     res.json({ message: result, stateCode: 200 });
   } catch (err) {

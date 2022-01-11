@@ -9,6 +9,7 @@ interface INote extends Document {
   parentId: string;
   title: string;
   content: string;
+  type: string;
   createdAt: Date;
 }
 const noteSchema: Schema = new Schema({
@@ -18,6 +19,9 @@ const noteSchema: Schema = new Schema({
     required: true,
   },
   content: {
+    type: String,
+  },
+  search: {
     type: String,
   },
 
