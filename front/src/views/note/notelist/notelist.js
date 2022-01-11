@@ -77,8 +77,8 @@ const NoteList = () => {
   return (
     <>
       <h1>HOME</h1>
-      <CCol sm={3}>
-        <CForm>
+      <CForm>
+        <CCol sm={3}>
           <CIcon icon={cilSearch} size="lg" style={{ cursor: 'pointer' }}></CIcon>
           <CFormInput
             className="form-control"
@@ -90,9 +90,9 @@ const NoteList = () => {
           <CButton type="submit" size="sm" onClick={searchTotal}>
             검색
           </CButton>
-        </CForm>
-      </CCol>
-      {searchResult.length >= 1 && (
+        </CCol>
+      </CForm>
+      {searchResult.length >= 1 ? (
         <CRow>
           {searchResult.map((result) => (
             <CCol sm={5} key={result._id}>
@@ -101,12 +101,14 @@ const NoteList = () => {
                   <CCardTitle>
                     <Link to={`/notes/${result.title}`}>{result.title}</Link>
                   </CCardTitle>
-                  <CCardText>{result.content}</CCardText>
+                  <CCardText>{result.search}</CCardText>
                 </CCardBody>
               </CCard>
             </CCol>
           ))}
         </CRow>
+      ) : (
+        <div style={{ color: 'red' }}>해당 검색 결과가 없습니다.</div>
       )}
       <div className="container">
         <CRow>
