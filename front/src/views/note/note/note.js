@@ -22,7 +22,8 @@ const Note = ({ match }) => {
   }
   const deleteNote = async (id, e) => {
     try {
-      const response = await axios.delete(`http://localhost:8000/notes/${id}`)
+      const findNote = await axios.get(`http//`)
+      const response = await axios.delete(`http://localhost:8000/notes/${id}`, {})
     } catch (err) {
       setError(err)
     }

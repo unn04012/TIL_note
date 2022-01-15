@@ -66,6 +66,7 @@ const NoteList = () => {
     try {
       const response = await axios.get(`http://localhost:8000/notes/search/?search=${search}`)
       setSearchResult(response.data.message)
+      console.log(searchResult)
       if (searchResult.length) console.log(searchResult)
     } catch (err) {
       setError(err)
@@ -95,13 +96,23 @@ const NoteList = () => {
       {searchResult.length >= 1 ? (
         <CRow>
           {searchResult.map((result) => (
-            <CCol sm={5} key={result._id}>
+            <CCol sm={3} key={result._id}>
               <CCard style={{ width: '18rem' }}>
                 <CCardBody>
                   <CCardTitle>
                     <Link to={`/notes/${result.title}`}>{result.title}</Link>
                   </CCardTitle>
-                  <CCardText>{result.search}</CCardText>
+                  <CCardText
+                    style={{
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                    }}
+                  >
+                    {result.search}
+                  </CCardText>
                 </CCardBody>
               </CCard>
             </CCol>

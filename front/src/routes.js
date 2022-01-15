@@ -1,5 +1,4 @@
 import React from 'react'
-import Trash from './views/trash/Trash'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
@@ -56,7 +55,8 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
 // TrashCan
-const trash = React.lazy(() => import('./views/trash/Trash'))
+const TrashList = React.lazy(() => import('./views/trash/trashlist/Trashlist'))
+const Trash = React.lazy(() => import('./views/trash/trash/Trash'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -106,7 +106,8 @@ const routes = [
   { path: '/notes', name: 'NoteList', component: NoteList, exact: true },
   { path: '/notes/:id?/markdown/:title?', name: 'Markdown', component: Markdown },
   { path: '/notes/:title', name: 'Note', component: Note },
-  { path: '/trash', name: 'Trash', component: Trash, exact: true },
+  { path: '/trash', name: '휴지통', component: TrashList, exact: true },
+  { path: '/trash/:id', name: 'Trash', component: Trash },
 ]
 
 export default routes
