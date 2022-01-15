@@ -8,6 +8,7 @@ import {
   updateNote,
   deleteNote,
   searchNote,
+  noteById,
 } from '../controllers/note';
 
 export default class Notes {
@@ -15,6 +16,7 @@ export default class Notes {
   router = express.Router();
   constructor() {
     this.router.get('/', noteList);
+    this.router.get('/:id', noteById);
     this.router.get('/date/:date', noteListByDate);
     this.router.get('/title/:title', noteByTitle);
     this.router.get('/search', searchNote);

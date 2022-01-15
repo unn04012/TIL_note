@@ -1,8 +1,9 @@
 import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
-
+/** rotues */
 import Notes from './src/routes/notes';
+import Trash from './src/routes/trash';
 
 import App from './src/app';
 import connect from './src/schemas/index';
@@ -38,7 +39,7 @@ connect();
  * DEFINE ROUTES
  * @OBJECT
  */
-const routes = [new Notes()];
+const routes = [new Notes(), new Trash()];
 
 /**
  * DEFINE MIDDLEWARES

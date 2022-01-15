@@ -6,10 +6,11 @@ const {
 } = Schema;
 
 interface INote extends Document {
+  _id: string;
   parentId: string;
   title: string;
   content: string;
-  type: string;
+  search?: string;
   createdAt: Date;
 }
 const noteSchema: Schema = new Schema({

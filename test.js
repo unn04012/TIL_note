@@ -103,13 +103,13 @@ let index = -1;
 let quotes = [];
 
 // str = str.replace(/(\s*)/g, '');
-console.log(str);
+// console.log(str);
 do {
   index = str.indexOf('```', index + 1);
   if (index !== -1) quotes.push(index);
 } while (index !== -1);
 let newStr = str.slice(0, quotes[0]);
-console.log(quotes);
+// console.log(quotes);
 for (let i = 1; i < quotes.length; i += 2) {
   console.log(quotes[i] + 3, quotes[i + 1]);
   if (quotes[i + 1]) newStr += str.slice(quotes[i] + 3, quotes[i + 1]);
@@ -118,5 +118,28 @@ for (let i = 1; i < quotes.length; i += 2) {
 if (quotes[quotes.length - 1] !== str.length - 1) newStr += str.slice(quotes[quotes.length - 1] + 3, str.length);
 // console.log(newStr);
 newStr = newStr.replace(/[^a-zA-Z0-9():ㄱ-ㅎ|ㅏ-ㅣ|가-힣._\s'"]/g, '');
-console.log(newStr);
-console.log(str[1532]);
+// console.log(newStr);
+// console.log(str[1532]);
+
+class test {
+  constructor(_id) {
+    this.id = _id;
+  }
+  toString() {
+    return this.id.toString();
+  }
+}
+const findNote = {
+  _id: new test(123),
+  title: 'test',
+  content: 'delete test',
+  search: 'delete test',
+  createdAt: '2022-01-15T12:54:43.804Z',
+  __v: 0,
+};
+
+console.log(findNote);
+if (findNote) {
+  findNote._id = findNote._id.toString();
+}
+console.log(findNote);

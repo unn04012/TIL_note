@@ -6,10 +6,13 @@ const {
 } = Schema;
 
 interface ITrash extends Document {
-  parentId: string;
+  _id: Schema.Types.ObjectId;
+  parentId?: string;
   title: string;
   content: string;
+  search: string;
   createdAt: Date;
+  deletedAt: Date;
 }
 const trashSchema: Schema = new Schema({
   parentId: { type: ObjectId, ref: 'Trash' },
@@ -20,7 +23,13 @@ const trashSchema: Schema = new Schema({
   content: {
     type: String,
   },
-
+  search: {
+    type: String,
+  },
+  createdAt: {
+    type: Date,
+    required: true,
+  },
   deletedAt: {
     type: Date,
     default: Date.now,
