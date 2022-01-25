@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router'
 import axios from 'axios'
 import { CRow, CCol, CButton } from '@coreui/react'
 import { Link } from 'react-router-dom'
 
 const TrashList = () => {
   const [trashes, setTrashes] = useState([])
+  const history = useHistory()
   const showTrashes = async () => {
     const response = await axios.get('http://localhost:8000/trash')
     setTrashes(response.data.trashList)
+  }
+  const restoreAll = async () => {
+    const response = await axios.post('http://localhost:8000/trash/restore')
+    history.push('/notes')
   }
   useEffect(() => {
     showTrashes()
@@ -27,7 +33,7 @@ const TrashList = () => {
             ))}
           </CRow>
           <br />
-          <CButton href="/notes/markdown" variant="outline" className="me-md-2" color="danger">
+          <CButton variant="outline" className="me-md-2" color="danger" onClick={restoreAll}>
             전체복원
           </CButton>
         </div>

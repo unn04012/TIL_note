@@ -29,7 +29,7 @@ const Markdown = ({ match }) => {
       } else {
         response = await axios.post('http://localhost:8000/notes', note)
       }
-      history.push('/notes')
+      history.push(`/notes/${title}`)
     } catch (err) {
       setError(err)
     }

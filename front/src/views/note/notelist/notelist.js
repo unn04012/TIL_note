@@ -66,7 +66,6 @@ const NoteList = () => {
     try {
       const response = await axios.get(`http://localhost:8000/notes/search/?search=${search}`)
       setSearchResult(response.data.message)
-      console.log(searchResult)
       if (searchResult.length) console.log(searchResult)
     } catch (err) {
       setError(err)
