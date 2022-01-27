@@ -48,8 +48,9 @@ const noteByTitle = async (req: Request, res: Response, next: NextFunction) => {
 const noteById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const note = await Trash.find({ _id: id });
-    res.json({ message: note, status: 200 });
+    const note = await Note.find({ _id: id });
+    const subPages = await Note.find({ parentId: note[0]._id });
+    res.json({ message: note, status: 200, subPages: subPages ? subPages : null });
   } catch (err) {
     console.error(err);
     next(err);
@@ -140,21 +141,13 @@ const searchNote = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { search } = req.query;
     const regex = new RegExp(`.*${search}.*`, 'i');
+
     const result = await Note.find(
       {
         $or: [{ title: { $regex: regex } }, { search: { $regex: regex } }],
       },
       { title: true, search: true },
     );
-    // if (search) {
-    //   result.forEach(element => {
-    //     if (element.search) {
-    //       const queryIndex = element.search.indexOf(search as string);
-    //       console.log(search, queryIndex);
-    //       if (queryIndex !== -1) element.search = element.search.slice(queryIndex, element.search.length);
-    //     }
-    //   });
-    // }
 
     res.json({ message: result, stateCode: 200 });
   } catch (err) {

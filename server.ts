@@ -9,7 +9,6 @@ import App from './src/app';
 import connect from './src/schemas/index';
 import cors from 'cors';
 dotenv.config();
-
 /**
  * DEFINE MODELS
  * @OBJECT

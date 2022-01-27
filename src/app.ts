@@ -1,5 +1,10 @@
 import express, { Router, Request, Response, NextFunction } from 'express';
 import nunjucks from 'nunjucks';
+import swaggerUI from 'swagger-ui-express';
+import YAML from 'yamljs';
+import path from 'path';
+const __dirname = path.resolve();
+const swaggerSpec = YAML.load(path.join(__dirname, './src/docs/openAPI.yaml'));
 
 interface Setting {
   key: string;
@@ -27,11 +32,11 @@ export default class App {
     // nunjucks.render(path.resolve(__dirname))
 
     this.port = appConfig.port;
+    this.app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
     this.applySettings(appConfig.settings);
     this.applyMiddlewares(appConfig.middlewares);
     this.applyRoutes(appConfig.routes);
     this.app.use(this.notFoundError);
-    // this.app.use(this.serverError);
   }
 
   applySettings(settings: Array<Setting>) {

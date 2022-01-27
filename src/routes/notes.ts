@@ -16,12 +16,11 @@ export default class Notes {
   router = express.Router();
   constructor() {
     this.router.get('/', noteList);
+    this.router.get('/search', searchNote);
     this.router.get('/:id', noteById);
     this.router.get('/date/:date', noteListByDate);
-    this.router.get('/title/:title', noteByTitle);
-    this.router.get('/search', searchNote);
-    this.router.post('/title/:id', createSubNote);
     this.router.post('/', createNote);
+    this.router.post('/:id', createSubNote);
     this.router.patch('/:id', updateNote);
     this.router.delete('/:id', deleteNote);
   }
