@@ -4,6 +4,7 @@ import TrashSchema from '../schemas/trash';
 import Note from '../schemas/note';
 
 import { model, Schema, Model, Document } from 'mongoose';
+import { findAllandDelete } from '../database/Database';
 
 // const { Schema } = mongoose;
 const {
@@ -25,6 +26,7 @@ export default class Trash {
   router = express.Router();
   constructor() {
     this.router.get('/', this.trashList);
+    this.router.get('/:id', this.getTrashById);
     this.router.post('/', this.createTrash);
     this.router.post('/restore', this.restoreAll);
     this.router.post('/restore/:id', this.restoreTrash);
@@ -34,6 +36,17 @@ export default class Trash {
   trashList = async (req: Request, res: Response, next: NextFunction) => {
     const trashList = await TrashSchema.find();
     return res.json({ message: 'success', trashList });
+  };
+
+  getTrashById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const trash = await TrashSchema.find({ _id: id });
+      return res.json({ message: 'success', trash });
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
   };
 
   createTrash = (req: Request, res: Response, next: NextFunction) => {
@@ -63,8 +76,25 @@ export default class Trash {
       console.log(err);
     }
   };
-  restoreAll = (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body);
-    return res.json('success');
+  restoreAll = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const trashes = await findAllandDelete(TrashSchema);
+      if (trashes) {
+        const notes = trashes.map(trash => {
+          return {
+            _id: trash._id.toString(),
+            parentId: trash.parentId,
+            title: trash.title,
+            content: trash.content,
+            search: trash.search,
+            createdAt: trash.createdAt,
+          };
+        });
+        Note.insertMany(notes);
+      }
+      return res.json('success');
+    } catch (err) {
+      console.log(err);
+    }
   };
 }
