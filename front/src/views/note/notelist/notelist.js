@@ -124,7 +124,7 @@ const NoteList = () => {
         <CRow>
           {notes.map((note) => (
             <CCol sm={2} key={note._id}>
-              <Link to={`/notes/${note.title}`} style={{ textDecoration: 'none', width: '100px' }}>
+              <Link to={`/notes/${note._id}`} style={{ textDecoration: 'none', width: '100px' }}>
                 {note.title}
               </Link>
               <br />

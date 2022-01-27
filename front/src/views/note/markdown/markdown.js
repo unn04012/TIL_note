@@ -7,8 +7,10 @@ import { useHistory } from 'react-router'
 
 // import Editor from './editor'
 const Markdown = ({ match }) => {
-  const presentTitle = match.params.title
+  // const presentTitle = match.params.title
   const pageId = match.params.id
+  const parentId = match.params.parentId
+  console.log(pageId, parentId)
   const [id, setId] = useState('')
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -21,43 +23,32 @@ const Markdown = ({ match }) => {
 
     try {
       const note = { title, content }
-      let response = ''
-      if (pageId) {
-        response = await axios.post(`http://localhost:8000/notes/title/${pageId}`, note)
-      } else if (id) {
-        response = await axios.patch(`http://localhost:8000/notes/${id}`, note)
-      } else {
-        response = await axios.post('http://localhost:8000/notes', note)
-      }
-      history.push(`/notes/${title}`)
+      let response = pageId
+        ? await axios.patch(`http://localhost:8000/notes/${id}`, note) // 수정
+        : await axios.post(`http://localhost:8000/notes/${parentId}`, note) // 자식 페이지 생성
+
+      history.push(`/notes/${parentId}`)
     } catch (err) {
       setError(err)
     }
   }
-  const fetchNoteByTitle = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8000/notes/title/${presentTitle}`)
 
-      setId(response.data.message[0]._id)
-      setTitle(response.data.message[0].title)
-      setContent(response.data.message[0].content)
-    } catch (err) {
-      console.error(err)
-    }
-  }
   const fetchNoteById = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/notes/title/${pageId}`)
-      console.log(response)
-      setSubPages(response.data.message)
+      if (pageId) {
+        const response = await axios.get(`http://localhost:8000/notes/${pageId}`)
+        setId(response.data.message[0]._id)
+        setTitle(response.data.message[0].title)
+        setContent(response.data.message[0].content)
+        setSubPages(response.data.message)
+      }
     } catch (err) {
       console.error(err)
     }
   }
   useEffect(() => {
-    if (presentTitle) {
-      fetchNoteByTitle()
-    }
+    fetchNoteById()
+
     // if (pageId) {
     //   fetchNoteById()
     // }
@@ -78,11 +69,7 @@ const Markdown = ({ match }) => {
         <MDEditor.Markdown source={content} /> <br />
         <MDEditor value={content} onChange={setContent} preview="edit" height="400" />
         <br />
-        {presentTitle !== undefined ? (
-          <CButton type="submit">수정하기</CButton>
-        ) : (
-          <CButton type="submit">제출하기</CButton>
-        )}
+        <CButton type="submit">작성</CButton>
       </CForm>
     </>
   )

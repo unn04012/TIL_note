@@ -10,8 +10,8 @@ const Note = ({ match }) => {
   const [trash, setTrash] = useState([])
   const fetchNotes = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/notes/${id}`)
-      setTrash(response.data.message[0])
+      const response = await axios.get(`http://localhost:8000/trash/${id}`)
+      setTrash(response.data.trash[0])
     } catch (err) {
       console.error(err)
     }

@@ -5,15 +5,14 @@ import MDEditor from '@uiw/react-md-editor'
 import { Link } from 'react-router-dom'
 import { CButton, CCard, CCardBody, CCardTitle, CRow, CCol } from '@coreui/react'
 const Note = ({ match }) => {
-  const { title } = match.params
+  const { id } = match.params
   const [note, setNote] = useState([])
   const [subPages, setSubPages] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const fetchNotes = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/notes/title/${title}`)
-      console.log(response.data)
+      const response = await axios.get(`http://localhost:8000/notes/${id}`)
       setNote(response.data.message[0])
       setSubPages(response.data.subPages)
     } catch (err) {
@@ -22,7 +21,6 @@ const Note = ({ match }) => {
   }
   const deleteNote = async (id, e) => {
     try {
-      const findNote = await axios.get(`http//`)
       const response = await axios.delete(`http://localhost:8000/notes/${id}`, {})
     } catch (err) {
       setError(err)
@@ -37,7 +35,7 @@ const Note = ({ match }) => {
       if (window.confirm(message)) {
         onConfirm()
         deleteNote(id)
-        window.location.replace('/notes')
+        window.location.replace(`/notes/${id}`)
       } else {
         onCancel()
       }
@@ -50,12 +48,12 @@ const Note = ({ match }) => {
   const confirmDelete = useConfirm('삭제하시겠습니까?', deleteConfirm, cancelConfirm)
   useEffect(() => {
     fetchNotes()
-  }, [title])
+  }, [id])
 
   return (
     <>
       <div className="container">
-        <h1 style={{ fontSize: '40px' }}>{title}</h1>
+        <h1 style={{ fontSize: '40px' }}>{note.title}</h1>
         <CButton
           href={`/notes/${note._id}/markdown`}
           variant="outline"
@@ -70,7 +68,7 @@ const Note = ({ match }) => {
           {subPages &&
             subPages.map((note) => (
               <CCol sm={2} key={note._id}>
-                <Link to={`/notes/${note.title}`} style={{ textDecoration: 'none' }}>
+                <Link to={`/notes/${note._id}`} style={{ textDecoration: 'none' }}>
                   {note.title}
                 </Link>
                 <br />
@@ -89,8 +87,8 @@ const Note = ({ match }) => {
         <br />
         <MDEditor.Markdown source={note.content} />
         <br />
-        <CButton href={`/notes/markdown/${title}`} role="button" variant="outline" size="sm">
-          수정하기
+        <CButton href={`/notes/markdown/${note._id}`} role="button" variant="outline" size="sm">
+          작성하기
         </CButton>
       </div>
     </>

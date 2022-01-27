@@ -103,9 +103,9 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', component: Modals },
   { path: '/notifications/toasts', name: 'Toasts', component: Toasts },
   { path: '/widgets', name: 'Widgets', component: Widgets },
-  { path: '/notes', name: 'NoteList', component: NoteList, exact: true },
-  { path: '/notes/:id?/markdown/:title?', name: 'Markdown', component: Markdown },
-  { path: '/notes/:title', name: 'Note', component: Note },
+  { path: '/notes', name: 'Note', component: Note, exact: true },
+  { path: '/notes/:id', name: 'Note', component: Note, exact: true },
+  { path: '/notes/:parentId?/markdown/:id?', name: 'Markdown', component: Markdown },
   { path: '/trash', name: '휴지통', component: TrashList, exact: true },
   { path: '/trash/:id', name: 'Trash', component: Trash },
 ]
