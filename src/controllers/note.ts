@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Note from '../schemas/note';
 import Trash from '../schemas/trash';
+import { Error } from 'mongoose';
 
 const searchIndex = (content: string) => {
   let index = -1;
@@ -26,144 +27,81 @@ const makeResult = (message: string | Array<typeof Note>, status: number) => {
   return { message, status };
 };
 const noteList = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const notes = await Note.find({ parentId: null });
-    notes ? res.json({ message: notes, status: 200 }) : res.json(makeResult('no note list', 404));
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
+  const notes = await Note.find({ parentId: null });
+  res.json({ message: notes, status: 200 });
 };
-const noteByTitle = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { title } = req.params;
-    const lists = await Note.find({ title });
-    const subPages = await Note.find({ parentId: lists[0]._id });
-    res.json({ message: lists, status: 200, subPages: subPages ? subPages : null });
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
-};
+// const noteByTitle = async (req: Request, res: Response, next: NextFunction) => {
+//   try {
+//     const { title } = req.params;
+//     const lists = await Note.find({ title });
+//     const subPages = await Note.find({ parentId: lists[0]._id });
+//     res.json({ message: lists, status: 200, subPages: subPages ? subPages : null });
+//   } catch (err) {
+//     console.error(err);
+//     next(err);
+//   }
+// };
 const noteById = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id } = req.params;
-    const note = await Note.find({ _id: id });
-    const subPages = await Note.find({ parentId: note[0]._id });
-    res.json({ message: note, status: 200, subPages: subPages ? subPages : null });
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
+  const { id } = req.params;
+  const note = await Note.find({ _id: id });
+  const subPages = await Note.find({ parentId: note[0]._id });
+  res.json({ message: note, status: 200, subPages: subPages ? subPages : null });
 };
 
-const noteListByDate = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { date } = req.body;
-    const lists = await Note.find({ createdAt: date });
-    res.json({ lists });
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
-};
 const createNote = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { title, content } = req.body;
-    const searchContent = searchIndex(content);
-    await Note.create({ title, content, search: searchContent });
-    res.json({ message: 'success', stateCode: 200 });
-  } catch (err) {
-    console.error(err);
-    res.json({ message: 'failed', stateCode: 400 });
-    next(err);
-  }
+  const { title, content } = req.body;
+  const searchContent = searchIndex(content);
+  await Note.create({ title, content, search: searchContent });
+  res.json({ message: 'success', stateCode: 200 });
 };
 
 const createSubNote = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id } = req.params;
-    const { title, content } = req.body;
-    const searchContent = searchIndex(content);
-    const result = await Note.create({ title, content, parentId: id, search: searchContent });
-    if (result) {
-      res.json(makeResult('create subNote success', 200));
-    } else {
-      res.json(makeResult('create fail', 400));
-    }
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
+  const { id } = req.params;
+  const { title, content } = req.body;
+  const searchContent = searchIndex(content);
+  const result = await Note.create({ title, content, parentId: id, search: searchContent });
+  if (result) res.json({ message: 'success', stateCode: 200 });
 };
 const updateNote = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id } = req.params;
-    const { title, content } = req.body;
-    const result = await Note.updateOne({ _id: id }, { title, content });
-    if (result) res.json({ message: 'update success', stateCode: 200 });
-    else {
-      res.json({ message: 'update fail', stateCode: 404 });
-    }
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
+  const { id } = req.params;
+  const { title, content } = req.body;
+  const result = await Note.updateOne({ _id: id }, { title, content });
+  if (result) res.json({ message: 'success', stateCode: 200 });
 };
 const deleteNote = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { id } = req.params;
-    const findNote = await Note.find({ $or: [{ _id: id }, { parentId: id }] });
-    const changeIdNote = findNote.map(note => {
-      console.log(note);
-      return {
-        _id: note._id.toString(),
-        parentId: note.parentId,
-        title: note.title,
-        content: note.content,
-        search: note.search,
-        createdAt: note.createdAt,
-      };
-    });
-    console.log(changeIdNote);
-    const TrashResult = await Trash.insertMany(changeIdNote);
+  const { id } = req.params;
+  const findNote = await Note.find({ $or: [{ _id: id }, { parentId: id }] });
+  const changeIdNote = findNote.map(note => {
+    console.log(note);
+    return {
+      _id: note._id.toString(),
+      parentId: note.parentId,
+      title: note.title,
+      content: note.content,
+      search: note.search,
+      createdAt: note.createdAt,
+    };
+  });
 
-    const deleteResult = await Note.deleteMany({ $or: [{ _id: id }, { parentId: id }] });
-
-    res.json({ message: 'delete success', stateCode: 200 });
-  } catch (err) {
-    console.error(err);
-    next(err);
+  const TrashResult = await Trash.insertMany(changeIdNote);
+  if (TrashResult) {
+    await Note.deleteMany({ $or: [{ _id: id }, { parentId: id }] });
   }
+  res.json({ message: 'success', stateCode: 200 });
 };
 
 const searchNote = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { search } = req.query;
-    const regex = new RegExp(`.*${search}.*`, 'i');
+  const { search } = req.query;
+  const regex = new RegExp(`.*${search}.*`, 'i');
 
-    const result = await Note.find(
-      {
-        $or: [{ title: { $regex: regex } }, { search: { $regex: regex } }],
-      },
-      { title: true, search: true },
-    );
+  const result = await Note.find(
+    {
+      $or: [{ title: { $regex: regex } }, { search: { $regex: regex } }],
+    },
+    { title: true, search: true },
+  );
 
-    res.json({ message: result, stateCode: 200 });
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
+  res.json({ message: result, stateCode: 200 });
 };
 
-export {
-  noteList,
-  createNote,
-  updateNote,
-  deleteNote,
-  noteListByDate,
-  noteByTitle,
-  createSubNote,
-  searchNote,
-  noteById,
-};
+export { noteList, createNote, updateNote, deleteNote, createSubNote, searchNote, noteById };

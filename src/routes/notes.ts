@@ -1,27 +1,23 @@
-import express from 'express';
-import {
-  noteList,
-  noteListByDate,
-  noteByTitle,
-  createSubNote,
-  createNote,
-  updateNote,
-  deleteNote,
-  searchNote,
-  noteById,
-} from '../controllers/note';
+import express, { Request, Response, NextFunction } from 'express';
+import { noteList, createSubNote, createNote, updateNote, deleteNote, searchNote, noteById } from '../controllers/note';
 
 export default class Notes {
   path = '/notes';
   router = express.Router();
   constructor() {
-    this.router.get('/', noteList);
-    this.router.get('/search', searchNote);
-    this.router.get('/:id', noteById);
-    this.router.get('/date/:date', noteListByDate);
-    this.router.post('/', createNote);
-    this.router.post('/:id', createSubNote);
-    this.router.patch('/:id', updateNote);
-    this.router.delete('/:id', deleteNote);
+    this.router.get('/', this.wrapAsync(noteList));
+    this.router.get('/search', this.wrapAsync(searchNote));
+    this.router.post('/', this.wrapAsync(createNote));
+    this.router.get('/:id', this.wrapAsync(noteById));
+    this.router.post('/:id', this.wrapAsync(createSubNote));
+    this.router.patch('/:id', this.wrapAsync(updateNote));
+    this.router.delete('/:id', this.wrapAsync(deleteNote));
   }
+
+  wrapAsync = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+    // callback function : 인자로 함수를 전달하는 함수
+    return (req: Request, res: Response, next: NextFunction) => {
+      fn(req, res, next).catch(next);
+    };
+  };
 }

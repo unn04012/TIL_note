@@ -3,6 +3,8 @@ import nunjucks from 'nunjucks';
 import swaggerUI from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
+import HttpException from './error/Error';
+import castErrorHandler from './error/ErrorMiddleware';
 const __dirname = path.resolve();
 const swaggerSpec = YAML.load(path.join(__dirname, './src/docs/openAPI.yaml'));
 
@@ -29,13 +31,13 @@ export default class App {
       express: this.app,
       watch: true,
     });
-    // nunjucks.render(path.resolve(__dirname))
 
     this.port = appConfig.port;
     this.app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
     this.applySettings(appConfig.settings);
     this.applyMiddlewares(appConfig.middlewares);
     this.applyRoutes(appConfig.routes);
+    this.app.use(castErrorHandler);
     this.app.use(this.notFoundError);
   }
 
@@ -58,8 +60,16 @@ export default class App {
   }
 
   notFoundError = (req: Request, res: Response, next: NextFunction) => {
-    const error = new Error('There is no router');
-    next(error);
+    res.status(400).json({ errorCode: 404, errorMessage: 'Not Found' });
+    next();
+  };
+
+  wrapAsync = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+    // callback function : 인자로 함수를 전달하는 함수
+
+    return (req: Request, res: Response, next: NextFunction) => {
+      fn(req, res, next).catch(next);
+    };
   };
 
   // serverError = (err: Error, res: Response) => {
