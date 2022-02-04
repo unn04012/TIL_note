@@ -1,14 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { noteList, createSubNote, createNote, updateNote, deleteNote, searchNote, noteById } from '../controllers/note';
+import { createSubNote, createNote, updateNote, deleteNote, noteById } from '../controllers/note';
 
 export default class Notes {
   path = '/notes';
   router = express.Router();
   constructor() {
-    this.router.get('/', this.wrapAsync(noteList));
-    this.router.get('/search', this.wrapAsync(searchNote));
-    this.router.post('/', this.wrapAsync(createNote));
     this.router.get('/:id', this.wrapAsync(noteById));
+    this.router.post('/', this.wrapAsync(createNote));
     this.router.post('/:id', this.wrapAsync(createSubNote));
     this.router.patch('/:id', this.wrapAsync(updateNote));
     this.router.delete('/:id', this.wrapAsync(deleteNote));

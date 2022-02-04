@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 /** rotues */
 import Notes from './src/routes/notes';
 import Trash from './src/routes/trash';
+import Register from './src/routes/Register';
+import Login from './src/routes/Login';
 
 import App from './src/app';
 import connect from './src/schemas/index';
@@ -38,7 +40,7 @@ connect();
  * DEFINE ROUTES
  * @OBJECT
  */
-const routes = [new Notes(), new Trash()];
+const routes = [new Notes(), new Trash(), new Register(), new Login()];
 
 /**
  * DEFINE MIDDLEWARES
