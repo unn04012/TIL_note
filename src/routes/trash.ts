@@ -1,100 +1,21 @@
 import express, { Request, Response, NextFunction } from 'express';
-import TrashSchema from '../schemas/trash';
-
-import Note from '../schemas/note';
-
-import { model, Schema, Model, Document } from 'mongoose';
-import { findAllandDelete } from '../database/Database';
-
-// const { Schema } = mongoose;
-const {
-  Types: { ObjectId },
-} = Schema;
-
-interface ITrash extends Document {
-  _id: Schema.Types.ObjectId;
-  parentId?: string;
-  title: string;
-  content: string;
-  search: string;
-  createdAt: Date;
-  deletedAt: Date;
-}
+import { trashList, getTrashById, restoreTrash, permanentDelete, restoreAll } from '../controllers/trash';
 
 export default class Trash {
   path = '/trash';
   router = express.Router();
   constructor() {
-    this.router.get('/', this.trashList);
-    this.router.get('/:id', this.getTrashById);
-    this.router.post('/', this.createTrash);
-    this.router.post('/restore', this.restoreAll);
-    this.router.post('/restore/:id', this.restoreTrash);
-    this.router.delete('/permanent/:id', this.permanentDelete);
+    this.router.get('/', this.wrapAsync(trashList));
+    this.router.get('/:id', this.wrapAsync(getTrashById));
+
+    this.router.post('/restore', this.wrapAsync(restoreAll));
+    this.router.post('/restore/:id', this.wrapAsync(restoreTrash));
+    this.router.delete('/permanent/:id', this.wrapAsync(permanentDelete));
   }
-
-  trashList = async (req: Request, res: Response, next: NextFunction) => {
-    const trashList = await TrashSchema.find();
-    return res.json({ message: 'success', trashList });
-  };
-
-  getTrashById = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
-      const trash = await TrashSchema.find({ _id: id });
-      return res.json({ message: 'success', trash });
-    } catch (err) {
-      console.log(err);
-      next(err);
-    }
-  };
-
-  createTrash = (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body);
-    return res.json('success');
-  };
-  restoreTrash = async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const trash = (await TrashSchema.findOne({ _id: id })) as ITrash;
-    const changeTrashId = {
-      _id: trash._id.toString(),
-      parentId: trash.parentId,
-      title: trash.title,
-      content: trash.content,
-      search: trash.search,
-      createdAt: trash.createdAt,
+  wrapAsync = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+    // callback function : 인자로 함수를 전달하는 함수
+    return (req: Request, res: Response, next: NextFunction) => {
+      fn(req, res, next).catch(next);
     };
-    await Note.create(changeTrashId);
-    await TrashSchema.deleteOne({ _id: id });
-    return res.json('success restore');
-  };
-  permanentDelete = async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      await TrashSchema.deleteOne({ _id: id });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  restoreAll = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const trashes = await findAllandDelete(TrashSchema);
-      if (trashes) {
-        const notes = trashes.map(trash => {
-          return {
-            _id: trash._id.toString(),
-            parentId: trash.parentId,
-            title: trash.title,
-            content: trash.content,
-            search: trash.search,
-            createdAt: trash.createdAt,
-          };
-        });
-        Note.insertMany(notes);
-      }
-      return res.json('success');
-    } catch (err) {
-      console.log(err);
-    }
   };
 }

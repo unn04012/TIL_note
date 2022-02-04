@@ -17,4 +17,5 @@ const databaseErrorHandler = (error: Error, req: Request, res: Response, next: N
   }
   next(error);
 };
+
 export default castErrorHandler;

@@ -26,10 +26,10 @@ const searchIndex = (content: string) => {
 const makeResult = (message: string | Array<typeof Note>, status: number) => {
   return { message, status };
 };
-const noteList = async (req: Request, res: Response, next: NextFunction) => {
-  const notes = await Note.find({ parentId: null });
-  res.json({ message: notes, status: 200 });
-};
+// const noteList = async (req: Request, res: Response, next: NextFunction) => {
+//   const notes = await Note.find({ parentId: null });
+//   res.json({ message: notes, status: 200 });
+// };
 // const noteByTitle = async (req: Request, res: Response, next: NextFunction) => {
 //   try {
 //     const { title } = req.params;
@@ -42,6 +42,17 @@ const noteList = async (req: Request, res: Response, next: NextFunction) => {
 //   }
 // };
 const noteById = async (req: Request, res: Response, next: NextFunction) => {
+  const { keyword } = req.query;
+  if (keyword) {
+    const regex = new RegExp(`.*${keyword}.*`, 'i');
+    const result = await Note.find(
+      {
+        $or: [{ title: { $regex: regex } }, { search: { $regex: regex } }],
+      },
+      { title: true, search: true },
+    );
+    res.json({ message: result, stateCode: 200 });
+  }
   const { id } = req.params;
   const note = await Note.find({ _id: id });
   const subPages = await Note.find({ parentId: note[0]._id });
@@ -62,12 +73,14 @@ const createSubNote = async (req: Request, res: Response, next: NextFunction) =>
   const result = await Note.create({ title, content, parentId: id, search: searchContent });
   if (result) res.json({ message: 'success', stateCode: 200 });
 };
+
 const updateNote = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   const { title, content } = req.body;
   const result = await Note.updateOne({ _id: id }, { title, content });
   if (result) res.json({ message: 'success', stateCode: 200 });
 };
+
 const deleteNote = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   const findNote = await Note.find({ $or: [{ _id: id }, { parentId: id }] });
@@ -90,18 +103,18 @@ const deleteNote = async (req: Request, res: Response, next: NextFunction) => {
   res.json({ message: 'success', stateCode: 200 });
 };
 
-const searchNote = async (req: Request, res: Response, next: NextFunction) => {
-  const { search } = req.query;
-  const regex = new RegExp(`.*${search}.*`, 'i');
+// const searchNote = async (req: Request, res: Response, next: NextFunction) => {
+//   const { search } = req.query;
+//   const regex = new RegExp(`.*${search}.*`, 'i');
 
-  const result = await Note.find(
-    {
-      $or: [{ title: { $regex: regex } }, { search: { $regex: regex } }],
-    },
-    { title: true, search: true },
-  );
+//   const result = await Note.find(
+//     {
+//       $or: [{ title: { $regex: regex } }, { search: { $regex: regex } }],
+//     },
+//     { title: true, search: true },
+//   );
 
-  res.json({ message: result, stateCode: 200 });
-};
+//   res.json({ message: result, stateCode: 200 });
+// };
 
-export { noteList, createNote, updateNote, deleteNote, createSubNote, searchNote, noteById };
+export { createNote, updateNote, deleteNote, createSubNote, noteById };

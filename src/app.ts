@@ -3,7 +3,6 @@ import nunjucks from 'nunjucks';
 import swaggerUI from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
-import HttpException from './error/Error';
 import castErrorHandler from './error/ErrorMiddleware';
 const __dirname = path.resolve();
 const swaggerSpec = YAML.load(path.join(__dirname, './src/docs/openAPI.yaml'));
@@ -59,17 +58,15 @@ export default class App {
     });
   }
 
+  // applyErrorMiddleware(middlewares) {
+  //   middlewares.forEach(middleware => {
+  //     this.app.use(middleware);
+  //   });
+  // }
+
   notFoundError = (req: Request, res: Response, next: NextFunction) => {
     res.status(400).json({ errorCode: 404, errorMessage: 'Not Found' });
     next();
-  };
-
-  wrapAsync = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
-    // callback function : 인자로 함수를 전달하는 함수
-
-    return (req: Request, res: Response, next: NextFunction) => {
-      fn(req, res, next).catch(next);
-    };
   };
 
   // serverError = (err: Error, res: Response) => {
