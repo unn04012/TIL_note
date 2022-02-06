@@ -48,6 +48,13 @@ export default class App {
 
   applyRoutes(routes: Array<Route>) {
     routes.forEach(route => {
+      for (let i = 0; i < route.router.stack.length; i++) {
+        for (let j = 0; j < route.router.stack[i].route.stack.length; j++) {
+          // console.log(route.router.stack[i].route.stack[j].handle);
+          route.router.stack[i].route.stack[j].handle = this.wrapAsync(route.router.stack[i].route.stack[j].handle);
+        }
+      }
+
       this.app.use(route.path, route.router);
     });
   }
@@ -65,7 +72,7 @@ export default class App {
   // }
 
   notFoundError = (req: Request, res: Response, next: NextFunction) => {
-    res.status(400).json({ errorCode: 404, errorMessage: 'Not Found' });
+    res.status(404).json({ errorCode: 404, errorMessage: 'Not Found Page' });
     next();
   };
 
@@ -75,6 +82,13 @@ export default class App {
   //   res.status(500);
   //   res.render('error');
   // };
+
+  wrapAsync = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+    // callback function : 인자로 함수를 전달하는 함수
+    return (req: Request, res: Response, next: NextFunction) => {
+      fn(req, res, next).catch(next);
+    };
+  };
 
   listen() {
     this.app.listen(this.port, () => {
