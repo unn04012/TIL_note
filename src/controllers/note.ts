@@ -51,7 +51,7 @@ const noteById = async (req: Request, res: Response, next: NextFunction) => {
       },
       { title: true, search: true },
     );
-    res.json({ message: result, stateCode: 200 });
+    return res.json({ message: result, stateCode: 200 });
   }
   const { id } = req.params;
   const note = await Note.find({ _id: id });

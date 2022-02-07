@@ -3,7 +3,7 @@ import nunjucks from 'nunjucks';
 import swaggerUI from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
-import castErrorHandler from './error/ErrorMiddleware';
+import { castErrorHandler, jwtError } from './middlewares/Error';
 const __dirname = path.resolve();
 const swaggerSpec = YAML.load(path.join(__dirname, './src/docs/openAPI.yaml'));
 
@@ -37,6 +37,7 @@ export default class App {
     this.applyMiddlewares(appConfig.middlewares);
     this.applyRoutes(appConfig.routes);
     this.app.use(castErrorHandler);
+    this.app.use(jwtError);
     this.app.use(this.notFoundError);
   }
 

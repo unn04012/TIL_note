@@ -7,8 +7,10 @@
     "target": "ES5",
     "outDir": "./dist",
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "typeRoots": ["@types", "./node_modules/@types"]
   },
+
   "include": ["server.ts", "src/**/*.ts"],
   "exclude": ["node_modules"]
 }
